@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>F8* Asset Maker</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="lib/jasny-bootstrap/css/jasny-bootstrap.min.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <button id="interfaceBtn" type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+        <a href="#"><img src="img/hamburger.svg" alt="navigation icon"></a>
+    </button>
+    <div id="interface" class="navmenu navmenu-default navmenu-fixed-left offcanvas-lg">
+        <div id="title">
+            <h1>F8* Asset Maker</h1>
+            <p>V1.0.2</p>
+        </div><!--Title-->
+        <div id="attributes"><!--Asset attributes-->
+            <h2>Asset Attributes</h2>
+            <form>
+                <input type="text" placeholder="asset name">
+                <input type="text" placeholder="author">
+                <input type="text" placeholder="description">
+                <ul>
+                    <li><input type="radio"></li>
+                    <li><input type="radio"></li>
+                </ul>
+            </form>
+        </div><!--/attributes-->
+        <div id="control"><!--Block control-->
+            <ul>
+                <li><a href="#"></a></li>
+                <li><a href="#"></a></li>
+                <li><a href="#"></a></li>
+            </ul>
+        </div><!--/control-->
+        <div id="specs"><!--Block Specifications-->
+            <ul><!--Pannel toggler-->
+                <li><a href="#"></a></li>
+                <li><a href="#"></a></li>
+            </ul>
+            <div><!--Modification pannel-->
+                
+            </div>
+            <div><!--Colorisation pannel-->
+                
+            </div>
+        </div><!--/specs-->
+        <div></div>
+    </div><!--/interface-->
+    <div id="display">
+    </div>
+</body>
+<script src="lib/jquery-1.11.2.min.js"></script>
+<script src="lib/three.min.js"></script>
+<script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="lib/jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
+<script src="javascript/maker.js"></script>
+</html>
