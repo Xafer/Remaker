@@ -1,6 +1,22 @@
+//VARIABLES
+
+@colorBack: rgb(230,230,230);
+@colorInner: rgb(200,200,200);
+@borderInterface: darken(@colorBack,40%);
+
+//MIXINS
+
+.outliner()
+{
+    text-shadow: 0 2px 0 #333, 0 -2px 0 #333, 2px 0 0 #333, -2px 0 0 #333;
+}
+
+//CSS
+
 body
 {
-    background-color:rgb(60,60,80);
+    background-color:rgb(60,60,70);
+    color:white;
 }
 
 #interfaceBtn
@@ -30,19 +46,49 @@ body
 
 #interface
 {
-    background-color:rgb(110,120,160);
+    background-color:@colorBack;
     width:320px;
     padding:10px;
     height:100%;
     font-family:n8;
-    border-right:1px solid rgb(65,70,90);
+    border-right:1px solid @borderInterface;
+    text-align: center;
+    .outliner();
+    #title
+    {
+        h1
+        {
+            font-size:24px;
+        }
+        p
+        {
+            font-size:12px;
+        }
+    }
+    
+    #attributes
+    {
+        h2
+        {
+            font-size:16px;
+        }
+        li
+        {
+            display:inline;
+            
+            label
+            {
+                font-size:12px;
+            }
+        }
+    }
 }
 
 #interface > div
 {
-    border:1px solid rgb(65,70,90);
+    border:1px solid @borderInterface;
     border-bottom-width: 4px;
     width:298px;
-    background-color:rgb(130,140,180);
+    background-color:@colorInner;
     margin-bottom:10px;
 }
