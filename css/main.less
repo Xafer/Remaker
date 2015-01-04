@@ -1,21 +1,25 @@
 //VARIABLES
 
-@colorBack: rgb(230,230,230);
-@colorInner: rgb(200,200,200);
+@borderSizer: 1px;
+
+@colorBack: darken(rgba(80,160,120,0.8),20%);
+@colorInner: lighten(@colorBack,10%);
+@colorBackground: darken(@colorBack,20%);
 @borderInterface: darken(@colorBack,40%);
 
 //MIXINS
 
 .outliner()
 {
-    text-shadow: 0 2px 0 #333, 0 -2px 0 #333, 2px 0 0 #333, -2px 0 0 #333;
+    zztext-shadow: 0 @borderSizer 0 #333, 0 -@borderSizer 0 #333, @borderSizer 0 0 #333, -@borderSizer 0 0 #333;
+    text-shadow: @borderSizer @borderSizer 0 #333, @borderSizer -@borderSizer 0 #333, -@borderSizer @borderSizer 0 #333, -@borderSizer -@borderSizer 0 #333;
 }
 
 //CSS
 
 body
 {
-    background-color:rgb(60,60,70);
+    background-color:@colorBackground;
     color:white;
 }
 
@@ -25,14 +29,14 @@ body
     left:20px;
     top:20px;
     display:inline;
-    border:1px solid rgb(200,200,255);
+    border:1px solid @borderInterface;
     border-radius:4px;
     height:24px;
     width:32px;
     padding:0;
     a,a:link,a:visited,a:active
     {
-        background-color:rgba(190,190,190,0.2);
+        background-color:darken(@colorBackground,5%);
         display:block;
         float:left;
         width:100%;
@@ -40,7 +44,7 @@ body
     }
     a:hover
     {
-        background-color:rgba(190,190,190,0.5);
+        background-color:darken(@colorBackground,8%);
     }
 }
 
@@ -72,6 +76,14 @@ body
         {
             font-size:16px;
         }
+        input,input:focus
+        {
+            margin:2px 0;
+            color:#999;
+            border:1px solid #999;
+            border-radius: 2px;
+            font-size:12px;
+        }
         li
         {
             display:inline;
@@ -82,6 +94,108 @@ body
             }
         }
     }
+    
+    #control
+    {
+        li
+        {
+            display:inline;
+            
+            a,a:link,a:visited,a:active
+            {
+                display:block;
+                float:left;
+                width:52px;
+                height:57px;
+                margin:0 20px;
+                opacity:1;
+                text-decoration:none;
+            }
+            a:hover
+            {
+                opacity:0.9;
+            }
+            #btn-add{ background-image: url(../img/addBlock.svg); }
+            #btn-clone{ background-image: url(../img/cloneBlock.svg); }
+            #btn-delete{ background-image: url(../img/deleteBlock.svg); }
+        
+            #btn-add:after,#btn-clone:after,#btn-delete:after
+            {
+                clear:both;
+                text-align: center;
+                margin-top:44px;
+                text-decoration: none;
+                color:white;
+                display:block;
+                font-size:12px;
+            }
+            #btn-add:after
+            {
+                content: "add";
+                margin-left:6px;
+            }
+            #btn-clone:after
+            {
+                content: "clone";
+                margin-left:-2px;
+            }
+            #btn-delete:after
+            {
+                content: "delete";
+                margin-left:-10px;
+            }
+        }
+    }
+    
+    #specs > ul > li
+    {
+        display:inline;
+        a,a:link,a:visited,a:active
+        {
+            display:block;
+            float:left;
+            width:52px;
+            height:57px;
+            margin:0 40px;
+            opacity:1;
+            text-decoration:none;
+        }
+        a:hover
+        {
+            opacity:0.9;
+        }
+        
+        #btn-mod { background-image: url(../img/modifyBlock.svg); }
+        #btn-col { background-image: url(../img/colorifyBlock.svg); }
+        
+        #btn-mod:after,#btn-col:after
+        {
+            clear:both;
+            text-align: center;
+            margin-top:44px;
+            text-decoration: none;
+            color:white;
+            display:block;
+            font-size:12px;
+        }
+        
+        #btn-mod:after
+        {
+            content: 'modify';
+            margin-left:-8px;
+        }
+        
+        #btn-col:after
+        {
+            content: 'colorize';
+            margin-left:-23px;
+        }
+    }
+    
+    #specs > ul
+    {
+        text-align: center;
+    }
 }
 
 #interface > div
@@ -91,4 +205,6 @@ body
     width:298px;
     background-color:@colorInner;
     margin-bottom:10px;
+    border-radius:2px;
+    padding:10px;
 }
