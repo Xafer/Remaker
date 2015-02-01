@@ -57,13 +57,16 @@ function importModel(file)
 {
     var importedModel;
     
-    if(file[0] == '{')
+    if(file[0] == '{')//If the file is a compatible JSON
     {
         importJSON(file);
     }
     
     function importJSON(json)
     {
+        
+        //When referring to the json's propreties, I use identidier keys, e.x.: part["proprety"] rather than part.proprety
+        
         var loadedModel;//Json from which the model is loaded
         
         var sceneModel = new Model();//The currently empty imported model
@@ -72,41 +75,41 @@ function importModel(file)
         
         //Loading parts
         
-        var partLength = loadedModel.parts.length;
+        var partLength = loadedModel["parts"].length;
         
         for(var i = 0; i < partLength; i++)
         {
-            var part = loadedModel.parts[i];//Attribute the current part to the variable
+            var part = loadedModel["parts"][i];//Attribute the current part to the variable
             
-            var partPosition = new THREE.Vector3(part.position[0], // Assign the position attributes of the part into an object
-                                                 part.position[1],
-                                                 part.position[2]);
+            var partPosition = new THREE.Vector3(part["position"][0], // Assign the position attributes of the part into an object
+                                                 part["position"][1],
+                                                 part["position"][2]);
             
-            var partScale = new THREE.Vector3(part.size[0], //Assign the scale attributes of the part into an object
-                                              part.size[1],
-                                              part.size[2]);
+            var partScale = new THREE.Vector3(part["size"][0], //Assign the scale attributes of the part into an object
+                                              part["size"][1],
+                                              part["size"][2]);
             
             var partRotation;//Instatiate the rotation variable, see below
             
-            if(part.rotation.length == 3)//If the rotation is in euler
+            if(part["rotation"].length == 3)//If the rotation is in euler
             {
-                partRotation = new THREE.Euler(part.rotation[0], //Assign it in a Euler-format object
-                                               part.rotation[1],
-                                               part.rotation[2]);
+                partRotation = new THREE.Euler(part["rotation"][0], //Assign it in a Euler-format object
+                                               part["rotation"][1],
+                                               part["rotation"][2]);
             }
             else
             {
-                partRotation = new THREE.Quaternion(part.rotation[0], //Assign it in a quaternion
-                                                    part.rotation[1],
-                                                    part.rotation[2],
-                                                    part.rotation[3]);
+                partRotation = new THREE.Quaternion(part["rotation"][0], //Assign it in a quaternion
+                                                    part["rotation"][1],
+                                                    part["rotation"][2],
+                                                    part["rotation"][3]);
             }
             
             var partColor = new THREE.Color();//Instanciate a color object
             
-            partColor.setRGB(part.color[0], // Assign the different channel values
-                             part.color[1],
-                             part.color[2]);
+            partColor.setRGB(part["color"][0], // Assign the different channel values
+                             part["color"][1],
+                             part["color"][2]);
             
             model.addPart(partPosition, partScale, partRotation, partColor);
         }
@@ -193,6 +196,12 @@ function main()
 function init()//Initiate what need to be initiated
 {
     main();//Starts the main loop.
+    
+    //Temporary debug for fancyness and demonstration.
+    
+    camera.position.set(3,1,3);//Places the camera
+    camera.rotation.y = Math.PI/4;//Rotates it to face the item (45degrees)
+    importModel(a);//Import the demo model
 }
 
 init();//Begins the application
