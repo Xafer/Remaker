@@ -4,6 +4,8 @@ var overlayScene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
 
+camera.rotation.order = "YXZ";//Changing rotation order for proper camera controls.
+
 var renderer = new THREE.WebGLRenderer({"alpha" : true});
 var overlayRenderer = new THREE.WebGLRenderer({"alpha" : true});
 
@@ -12,11 +14,11 @@ overlayRenderer.setSize( window.innerWidth, window.innerHeight );
 
 var bgColor = new THREE.Color(0x000000);
 
-renderer.setClearColor(bgColor,0);
+renderer.setClearColor(bgColor,0);//Setting render background to transparent
 overlayRenderer.setClearColor(bgColor,0);
 
-document.getElementById("display").appendChild( renderer.domElement );
-document.getElementById("display").appendChild( overlayRenderer.domElement );
+document.getElementById("display").appendChild( renderer.domElement );//Adding the model display
+document.getElementById("display").appendChild( overlayRenderer.domElement );//Adding the overlayed display
 
 //Classes
 
@@ -29,6 +31,12 @@ function Model() //Used model
     this["lights"] = [];//Array containing lights
     this["systems"] = [];//Array containing particle systems
     this["sceneObject"] = new THREE.Group();//Object used to display the model on the scene. It groups the parts.
+    
+    //this.addPart = function(pos,scale,rot,color)
+    
+    //this.removePart = function(part)
+    
+    //this.movePart = function(part, axis, local, amount)
     
     scene.add(this["sceneObject"]);
 }
@@ -44,9 +52,66 @@ var selection = new Array();
 var model = new Model();
 
 //Importation/exportations
-function importModel(JSON)
+
+function importModel(file)
 {
-    function importJSON(){}
+    var importedModel;
+    
+    if(file[0] == '{')
+    {
+        importJSON(file);
+    }
+    
+    function importJSON(json)
+    {
+        var loadedModel;//Json from which the model is loaded
+        
+        var sceneModel = new Model();//The currently empty imported model
+        
+        loadedModel = JSON.parse(json);
+        
+        //Loading parts
+        
+        var partLength = loadedModel.parts.length;
+        
+        for(var i = 0; i < partLength; i++)
+        {
+            var part = loadedModel.parts[i];//Attribute the current part to the variable
+            
+            var partPosition = new THREE.Vector3(part.position[0], // Assign the position attributes of the part into an object
+                                                 part.position[1],
+                                                 part.position[2]);
+            
+            var partScale = new THREE.Vector3(part.size[0], //Assign the scale attributes of the part into an object
+                                              part.size[1],
+                                              part.size[2]);
+            
+            var partRotation;//Instatiate the rotation variable, see below
+            
+            if(part.rotation.length == 3)//If the rotation is in euler
+            {
+                partRotation = new THREE.Euler(part.rotation[0], //Assign it in a Euler-format object
+                                               part.rotation[1],
+                                               part.rotation[2]);
+            }
+            else
+            {
+                partRotation = new THREE.Quaternion(part.rotation[0], //Assign it in a quaternion
+                                                    part.rotation[1],
+                                                    part.rotation[2],
+                                                    part.rotation[3]);
+            }
+            
+            var partColor = new THREE.Color();//Instanciate a color object
+            
+            partColor.setRGB(part.color[0], // Assign the different channel values
+                             part.color[1],
+                             part.color[2]);
+            
+            model.addPart(partPosition, partScale, partRotation, partColor);
+        }
+    }
+    
     function importN8(){}
 }
 
@@ -67,12 +132,12 @@ Model.prototype.addPart = function(position,scale,rotation,color)//Create a new 
     if(color == undefined)color = new THREE.Color(Math.floor(0xffffff * Math.random()));
     
     if(position == undefined)position = new THREE.Vector3();
-    if(scale == undefined)scale = new THREE.Vector3(1,1,1);
+    if(scale == undefined)scale = new THREE.Vector3(1,1,1);//Must be 1,1,1 or error occurs and the part scale is 0,0,0 by default (infinitely small)
     if(rotation == undefined)rotation = new THREE.Quaternion();
     
     var geometry = baseGeometry;//Copies the geomatry of the base object, notable a 1x1x1 cube.
     
-    var material = new THREE.MeshBasicMaterial(color);//Set the material color depending on final color
+    var material = new THREE.MeshBasicMaterial({color : color});//Set the material color depending on final color
     
     var part = new THREE.Mesh(geometry,material);
     
@@ -113,21 +178,21 @@ Model.prototype.movePart = function(part, axis, local, amount)
 
 var render = function ()
 {
-    renderer.render(scene, camera);
-    overlayRenderer.render(overlayScene,camera);
+    renderer.render(scene, camera);//Renders the scene in which the models reside
+    overlayRenderer.render(overlayScene,camera);//Renders the scene in which the overlay resides
 };
 
 function main()
 {
-    render();
-    requestAnimationFrame(main);
+    render();//Triggers the render
+    requestAnimationFrame(main);//Loop main at optimal speed
 }
 
 //Initiations
 
-function init()
+function init()//Initiate what need to be initiated
 {
-    main();
+    main();//Starts the main loop.
 }
 
-init();
+init();//Begins the application
