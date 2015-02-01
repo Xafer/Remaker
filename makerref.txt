@@ -1,0 +1,100 @@
+each .png file has the png data, then an end delimiter, then StartData, where the N8 data for blocks starts
+this file is formatted as such:
+consider each line starting with "--#" to be a generated comment, and any other line not including the comment to
+be raw data taken from an example.
+each comment corresponds to the line above it and is formatted as:
+--#	LINE#	SUBLINE# (Comment)
+subline resets back to 1 for each part, and each subline will always correspond to a specific description
+ex: subline 1 is always the Part ID, subline 2 is always the Connected ID
+
+StartData
+--#	1
+George~~Monster~
+--#	2	(Formatted as: "name~author~type")
+1
+--#	3	(Unsure? I believe this denotates that only parts follow. Ex: parts follow 1, emits follow 2. This is disgusting*)
+1
+--#	4	1 (Part ID: each individual part of the object has a unique id...)
+0
+--#	5	2 (Connected: the ID of the part this part is connected to)
+tpixel.tva
+--#	6	3 (Part type)
+1:1:1:1/0:0:0:1
+--#	7	4 (Color details: I believe it's "Emissive R:G:B:A / Diffuse R:G:B:A" but I could be wrong)
+N8\Blank.dds
+--#	8	5 (Material path)
+ 0: 0: 0
+--#	9	6 (Position)
+ 0:-.7071068: 0: .7071068
+--#	10	7 (Rotation)
+ 1: 1: 1
+--#	11	8 (Scale of the part. Probably best to ignore as the maker uses the bones to resize the parts. very weird. see subline 13)
+ 1
+--#	12	9 (Probably Bone ID)
+Bone02
+--#	13	10 (Probably Bone Type)
+ 0: 0: 0
+--#	14	11 (Probably bone data of some kind)
+ 0: 0: 0: .9999999
+--#	15	12 (who cares about bones)
+ 1: 1: 1
+--#	16	13 (Part Scale)
+2
+--#	17	1 (Also unknown. I believe this is related to line 2, and deonates that only demitters follow. Absolutely disgusting*)
+1
+--#	18	2 (Connected ID)
+:True:True:2:1:20:10:0:2:1:1:1:1:40:1:0.003921569:0.003921569:0.003921569:1:0.003921569:0.003921569:0.003921569:1:0.5019608:0.5019608:0.5019608:4:5:6:7:75:0:0:0
+--#	19	3 (Emitter Data. Holy shit. See below **)
+-5: 5: 0
+--#	20	4 (Position)
+ .5:-.5: .5: .5
+--#	21	5 (Rotation)
+ 1: 1: 1
+--#	22	6 (Scale? emitters never use scale but it was probably just copied code from a bone or something)
+0
+--#	23	1 (Connected) (This is a second emitter)
+:True:True:2:1:20:10:0:2:1:1:1:1:40:1:0.003921569:0.003921569:0.003921569:1:0.003921569:0.003921569:0.003921569:1:0.5019608:0.5019608:0.5019608:4:5:6:7:75:0:0:0
+--#	2	2 (Emitter Data)
+ 0: 0: 14.076
+--#	25	3 (Position)
+ 0: 0: 0: .9999999
+--#	2	4 (Rotation)
+ 1: 1: 1
+--#	27	5 (Scale?)
+~
+--#		(i think the following are animation data but i never bothered to decipher it)
+none
+!
+none
+!
+none
+!
+none
+!
+none
+!
+none
+!
+~,~
+
+
+*: for some reason each group of part types (like emits or blocks) starts with a number. 1 begins the list of blocks. 2 begins the
+list of emits. this is the worst system, because how would one know if, while parsing through the file, if the number is this
+magic "change the part type" number or if it's the id. how did aion do this. how. h o w
+
+*: emit data is, for some really dumb reason, condensed into a single line. here's what i know from tinkering:
+Text:Looping:Surface:Radius:Life:Speed:Weight:DX:DY:DZ:RX:RY:RZ:Power:R1:G1:B1:R2:G2:B2:R3:G3:B3:R4:G4:B4:S1:S2:S3:S4:no fucking clue
+
+Text: i don't know what this is? it was written in my comments but i don't know why
+Looping: True or False
+Surface: True or False
+Radius: Number
+Life: Number
+Speed: Number
+Weight: Number
+DX,DY,DZ: Vector components of the Direction property
+RX,RY,RZ: Vector components of the Random property
+Power: Number
+R#,G#,B#: Color components describing the colors at a certain frame. (ex: R2,G2,B2 describes the color at frame 2, etc)
+S1,S2,S3,S4: Describing the size of a certain frame (ex: S2 is the size at frame 2)
+no fucking clue: i have no idea. it always appears to be 0
