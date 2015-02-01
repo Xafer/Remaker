@@ -4,7 +4,8 @@
 
 @colorBack: darken(rgba(80,160,120,0.8),20%);
 @colorInner: lighten(@colorBack,10%);
-@colorBackground: darken(@colorBack,20%);
+@colorBackground: darken(@colorBack,10%);
+@colorBgGrad: darken(@colorBackground,10%);
 @borderInterface: darken(@colorBack,40%);
 
 //MIXINS
@@ -19,8 +20,23 @@
 
 body
 {
+    
     background-color:@colorBackground;
+    
     color:white;
+}
+
+#display
+{
+    background:linear-gradient(@colorBackground, @colorBgGrad);
+    background:-webkit-linear-gradient(@colorBackground, @colorBgGrad);
+    background:-moz-linear-gradient(@colorBackground, @colorBgGrad);
+    background:-ms-linear-gradient(@colorBackground, @colorBgGrad);
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
 }
 
 canvas

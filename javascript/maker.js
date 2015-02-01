@@ -51,6 +51,14 @@ var selection = new Array();
 
 var model = new Model();
 
+var cameraCenterPoint = new THREE.Vector3();
+var centerPointDest = new THREE.Vector3();
+
+var transformType = "translate";
+
+var zoomFactor = 3;
+var lastMousePos = new THREE.Vector2();
+
 //Importation/exportations
 
 function importModel(file)
@@ -126,6 +134,146 @@ function exportModel()
 
 //Visualisation
 
+function getMiddlePos(partArray)
+{
+    var minPos = new THREE.Vector3();
+    var maxPos = new THREE.Vector3();
+    
+    minPos.copy(partArray[0].position);//Making sure the values are not bigger or smaller than any of the parts
+    maxPos.copy(partArray[0].position);
+    
+    var resulting = new THREE.Vector3();
+    
+    var arrayLength = partArray.length;
+    
+    for(var i = 0; i < partArray.length; i++)
+    {
+        var partPosition = partArray[i].position;
+        
+        minPos = Math.min(minPos.x, partPosition.x);
+        minPos = Math.min(minPos.y, partPosition.y);
+        minPos = Math.min(minPos.z, partPosition.z);
+        
+        maxPos = Math.max(maxPos.x, partPosition.x);
+        maxPos = Math.max(maxPos.y, partPosition.y);
+        maxPos = Math.max(maxPos.z, partPosition.z);
+    }
+    
+    resulting.x = (minPos.x + maxPos.x) / 2;
+    resulting.y = (minPos.y + maxPos.y) / 2;
+    resulting.z = (minPos.z + maxPos.z) / 2;
+    
+    return resulting;
+}
+
+function updateCameraCenterDest()//Changing the camera destination after smoothing
+{
+    var newCenterPosition;
+    
+    if(selection.length == 0)
+        newCenterPosition = getMiddlePos(model.parts);
+    else
+        newCenterPosition = getMiddlePos(selection);
+    
+    centerPointDest.copy(newCenterPosition);
+}
+
+function updateCameraCenterPoint()//Smoothing between selections
+{
+    var middleRate = 0.2;
+    
+    var resulting = new THREE.Vector3();
+    
+    resulting.subVectors(cameraCenterPoint,centerPointDest);
+    
+    resulting.multiplyScalar(middleRate);
+    
+    cameraCenterPoint.add(resulting);
+}
+
+function rotateCamera()
+{
+    var subbedMovement = new THREE.Vector2();
+    
+    subbedMovement.subVectors(mouse.position,mouse.lastPosition);
+    
+    camera.rotation.y += subbedMovement.x/1000;
+    camera.rotation.x += subbedMovement.y/1000;
+}
+
+//Interractivity functions
+
+function setTransformationType(type)
+{
+    transformType = type;
+    //Todo: change the current gizmo appearance
+}
+
+//Selection functions
+
+function getSelectableAt(vec2)
+{
+    var raycaster = new THREE.Raycaster();//Create a raycaster
+    raycaster.setFromCamera( vec2, camera);//Create the ray to use depending on the mouse position and the camera's attributes (position & rotation)
+    
+    var intersectParts = raycaster.intersectObjects(model.parts);//Cast a ray to see if a block was clicked on
+    
+    if(intersectParts.length > 0)
+    {
+        var part = intersectParts[0].object;//Assign the first object in the display list of the raycaster
+        
+        var pos = selection.indexOf(part);//Index of the part in the array (-1 if not there)
+        
+        if(keys.ctrl)
+        {
+            if(pos < 0)//If it's not already in the list
+                addToSelection(part);
+            else//Else, deselect it
+                removeFromSelection(part);
+        }
+        else
+        {
+            pos = selection.indexOf(part);//Index of the part in the array (-1 if not there)
+            
+            if(pos < 0)//If it's not already in the list
+                setSelection(part);
+            else//Else, deselect it
+                clearSelection()
+        }
+    }
+    else
+    {
+        clearSelection();
+    }
+    
+    console.log(selection);
+}
+
+function setSelection(part)
+{
+    selection = [part];
+    updateCameraCenterDest();
+}
+
+function addToSelection(part)
+{
+    selection.push(part);
+    updateCameraCenterDest();
+}
+
+function removeFromSelection(part)
+{
+    var pos = selection.indexOf(part);
+    selection.splice(pos,1);
+    updateCameraCenterDest();
+}
+
+function clearSelection()
+{
+    selection = [];
+    updateCameraCenterDest();
+}
+
 //Manipulation functions
 
 Model.prototype.addPart = function(position,scale,rotation,color)//Create a new part
@@ -165,7 +313,7 @@ Model.prototype.removePart = function(part)
     this["sceneObject"].remove(part);//Remove the part from the model and the scene.
 }
 
-Model.prototype.movePart = function(part, axis, local, amount)
+Model.prototype.movePart = function(part, local, axis, amount)
 {
     var movement = new THREE.Vector3();
     
@@ -175,6 +323,12 @@ Model.prototype.movePart = function(part, axis, local, amount)
         movement.applyQuaternion(part.quaternion);//Rotates the movement vector to the current part's orientation
     
     part.position.add(movement);
+}
+
+Model.prototype.scalePart = function(part, axis, amount)
+{
+    part.scale[axis] += amount;
+    part.scale[axis] = Math.max(part.scale[axis] , 0);
 }
 
 //Main loops
@@ -187,6 +341,8 @@ var render = function ()
 
 function main()
 {
+    updateCameraCenterPoint();//Smooth animation for the camera
+    
     render();//Triggers the render
     requestAnimationFrame(main);//Loop main at optimal speed
 }
