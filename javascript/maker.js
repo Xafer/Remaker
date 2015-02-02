@@ -150,18 +150,17 @@ function getMiddlePos(partArray)
     {
         var partPosition = partArray[i].position;
         
-        minPos = Math.min(minPos.x, partPosition.x);
-        minPos = Math.min(minPos.y, partPosition.y);
-        minPos = Math.min(minPos.z, partPosition.z);
+        minPos.x = Math.min(minPos.x, partPosition.x);
+        minPos.y = Math.min(minPos.y, partPosition.y);
+        minPos.z = Math.min(minPos.z, partPosition.z);
         
-        maxPos = Math.max(maxPos.x, partPosition.x);
-        maxPos = Math.max(maxPos.y, partPosition.y);
-        maxPos = Math.max(maxPos.z, partPosition.z);
+        maxPos.x = Math.max(maxPos.x, partPosition.x);
+        maxPos.y = Math.max(maxPos.y, partPosition.y);
+        maxPos.z = Math.max(maxPos.z, partPosition.z);
     }
     
-    resulting.x = (minPos.x + maxPos.x) / 2;
-    resulting.y = (minPos.y + maxPos.y) / 2;
-    resulting.z = (minPos.z + maxPos.z) / 2;
+    resulting.addVectors(minPos,maxPos);
+    resulting.multiplyScalar(0.5);
     
     return resulting;
 }
@@ -184,7 +183,7 @@ function updateCameraCenterPoint()//Smoothing between selections
     
     var resulting = new THREE.Vector3();
     
-    resulting.subVectors(cameraCenterPoint,centerPointDest);
+    resulting.subVectors(centerPointDest,cameraCenterPoint);
     
     resulting.multiplyScalar(middleRate);
     
@@ -194,11 +193,21 @@ function updateCameraCenterPoint()//Smoothing between selections
 function rotateCamera()
 {
     var subbedMovement = new THREE.Vector2();
+    var speed = 2;
     
     subbedMovement.subVectors(mouse.position,mouse.lastPosition);
     
-    camera.rotation.y += subbedMovement.x/1000;
-    camera.rotation.x += subbedMovement.y/1000;
+    camera.rotation.y -= subbedMovement.x/1000 * speed;
+    camera.rotation.x -= subbedMovement.y/1000 * speed;
+}
+
+function updateCameraPosition()
+{
+    var distanceFactor = Math.cos(camera.rotation.x) * zoomFactor;
+    
+    camera.position.x = Math.sin(camera.rotation.y) * distanceFactor + cameraCenterPoint.x;
+    camera.position.y = -Math.sin(camera.rotation.x) * zoomFactor + cameraCenterPoint.y;
+    camera.position.z = Math.cos(camera.rotation.y) * distanceFactor + cameraCenterPoint.z;
 }
 
 //Interractivity functions
@@ -342,6 +351,7 @@ var render = function ()
 function main()
 {
     updateCameraCenterPoint();//Smooth animation for the camera
+    updateCameraPosition();
     
     render();//Triggers the render
     requestAnimationFrame(main);//Loop main at optimal speed

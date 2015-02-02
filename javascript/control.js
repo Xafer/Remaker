@@ -68,13 +68,15 @@ var mouse =
         mouseButtonHandler(e.button,true);
         
         //Part Selection
-        
-        var normalizedMousePosition = new THREE.Vector2();
-        
-        normalizedMousePosition.x = (mouse.position.x / window.innerWidth) * 2 - 1;
-        normalizedMousePosition.y = -(mouse.position.y / window.innerHeight) * 2 + 1;
+        if(e.button == 0)
+        {
+            var normalizedMousePosition = new THREE.Vector2();
 
-        getSelectableAt(normalizedMousePosition);
+            normalizedMousePosition.x = (mouse.position.x / window.innerWidth) * 2 - 1;
+            normalizedMousePosition.y = -(mouse.position.y / window.innerHeight) * 2 + 1;
+
+            getSelectableAt(normalizedMousePosition);
+        }
     });
     
     document.getElementById("display").addEventListener("mouseup",function(e)
