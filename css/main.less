@@ -92,6 +92,8 @@ canvas
     padding-right:20px;
     height:100%;
     font-family:n8;
+    font-smooth: never;
+    -webkit-font-smoothing:none;
     border-right:1px solid @borderInterface;
     text-align: center;
     .outliner();
@@ -112,6 +114,8 @@ canvas
         h2
         {
             font-size:14px;
+            font-smooth: never;
+            -webkit-font-smoothing:none;
         }
         input
         {
@@ -289,7 +293,7 @@ canvas
         height:100px;
     }
     
-    #specs .values
+    #modify
     {
         font-size:8px;
         color:white;
@@ -306,6 +310,11 @@ canvas
             padding:3px;
         }
         
+        .ratio
+        {
+            width:60px;
+        }
+        
         a , a:link , a:visited , a:hover , a:active
         {
             color:white;
@@ -314,17 +323,51 @@ canvas
             width:16px;
             height:16px;
             font-size:12px;
-            margin-bottom:2px;
-            margin-top:-2px;
             text-decoration: none;
+            margin:0 2px;
+            line-height:10px;
             cursor: pointer;
             font-size:10px;
+            .outliner();
             
-            .outliner;
+            border:1px solid lighten(@borderInterface,10%);
+            border-radius:3px;
+            background-color:rgba(0,0,0,0.1);
+        }
+        
+        .globals
+        {
+            width:84px;
+            position:absolute;
+            right: 0px;
+            
+            label
+            {
+                width:84px;
+                margin:2px 0;
+            }
+            
+            .fill, .fill:link , .fill:visited , .fill:hover , .fill:active
+            {
+                width:84px;
+                margin:2px 0;
+            }
+            
+            .halves, .halves:link , .halves:visited , .halves:hover , .halves:active
+            {
+                width:40px;
+                margin:2px 0;
+            }
+            
+            .halves:last-child
+            {
+                margin-left:4px;
+            }
         }
         
         .posValue
         {
+            display:block;
             outline:none;
             width:100px;
             float:left;
@@ -340,6 +383,11 @@ canvas
         {
             border-bottom-width: 3px;
             margin-bottom:0px;
+        }
+        
+        .ratio ~ .posValue
+        {
+            width:70px;
         }
     }
 }

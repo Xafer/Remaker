@@ -129,17 +129,19 @@ var ratio =
     
     //Interface buttons
     
-    for(var i = 0; i < 3; i++)//Assigning functions to buttons
+    //Axis-based functions
+    
+    for(var i = 0; i < 3; i++)//Type
     {
-        for(var j = 0; j < 3; j++)
+        for(var j = 0; j < 3; j++)//axis index
         {
-            for(var k = 0; k < 2; k++)
+            for(var k = 0; k < 2; k++)//Direction index
             {
                 var btnType = ['p','r','s'][i];//Position, rotation, scale
-                var axis = ['x','y','z'][j];
+                var axis = ['x','y','z'][j];//Axis ssign
                 var btnDir = ['m','p'][k];//Minus, plus
                 
-                document.getElementById(btnType + axis + btnDir).addEventListener('click',function(e)
+                document.getElementById(btnType + axis + btnDir).addEventListener('click',function(e)//Assign an event to the buttons
                 {
                     var id = e.target.id;
                     var type = ['p','r','s'].indexOf(id[0]);
@@ -156,5 +158,54 @@ var ratio =
                 });
             }
         }
+    }
+    
+    //Global scaling
+    
+    for(var j = 0; j < 2; j++)//Direction index
+    {
+        var btnDir = ['m','p'][j];//Directoin assign
+           
+        document.getElementById('sg' + btnDir).addEventListener('click',function(e)//Assign an event to the buttons
+        {
+            var id = e.target.id;
+            var type = ['p','r','s'].indexOf(id[0]);
+            var typeString = ["position","rotation","scale"][type];
+            var orientation = (id[2] == "m")?-1:1;
+            var operation = [model.movePart,model.rotatePart,model.scalePart][type];
+            for(var partIndex in selection)
+            {
+                var part = selection[partIndex];
+                var amount = orientation * ratio[typeString];
+                for(var a = 0; a < 3; a++)
+                { 
+                    var axis = ['x','y','z'][a];
+                    operation(part,axis,amount);
+                }
+            }
+        });
+    }
+    
+    for(var i = 0; i < 3; i++)
+    {
+        var btnType = ['Pos','Rot','Sca'][i];//Position, rotation, scale
+        
+        document.getElementById('reset' + btnType).addEventListener('click',function(e)//Assign an event to the buttons
+        {
+            var id = e.target.id;
+            for(var partIndex in selection)
+            {
+                var part = selection[partIndex];
+            
+                switch(id)
+                {
+                    case "resetPos": part.position.set(0,0,0); break;
+                    case "resetRot": part.quaternion.set(0,0,0,1); break;
+                    case "resetSca": part.scale.set(1,1,1); break;
+                }
+                
+                updateCameraCenterDest();
+            }
+        });
     }
 })();

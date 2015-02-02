@@ -67,6 +67,8 @@ canvas {
   padding-right: 20px;
   height: 100%;
   font-family: n8;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
   border-right: 1px solid rgba(0, 0, 0, 0.8);
   text-align: center;
   zztext-shadow: 0 1px 0 #333333, 0 -1px 0 #333333, 1px 0 0 #333333, -1px 0 0 #333333;
@@ -80,6 +82,8 @@ canvas {
 }
 #interface #attributes h2 {
   font-size: 14px;
+  font-smooth: never;
+  -webkit-font-smoothing: none;
 }
 #interface #attributes input {
   width: 100%;
@@ -232,11 +236,11 @@ canvas {
   position: relative;
   height: 100px;
 }
-#interface #specs .values {
+#interface #modify {
   font-size: 8px;
   color: white;
 }
-#interface #specs .values label {
+#interface #modify label {
   clear: left;
   float: left;
   width: 30px;
@@ -246,26 +250,61 @@ canvas {
   border-bottom: 1px solid black;
   padding: 3px;
 }
-#interface #specs .values a,
-#interface #specs .values a:link,
-#interface #specs .values a:visited,
-#interface #specs .values a:hover,
-#interface #specs .values a:active {
+#interface #modify .ratio {
+  width: 60px;
+}
+#interface #modify a,
+#interface #modify a:link,
+#interface #modify a:visited,
+#interface #modify a:hover,
+#interface #modify a:active {
   color: white;
   display: block;
   float: left;
   width: 16px;
   height: 16px;
   font-size: 12px;
-  margin-bottom: 2px;
-  margin-top: -2px;
   text-decoration: none;
+  margin: 0 2px;
+  line-height: 10px;
   cursor: pointer;
   font-size: 10px;
   zztext-shadow: 0 1px 0 #333333, 0 -1px 0 #333333, 1px 0 0 #333333, -1px 0 0 #333333;
   text-shadow: 1px 1px 0 #333333, 1px -1px 0 #333333, -1px 1px 0 #333333, -1px -1px 0 #333333;
+  border: 1px solid rgba(26, 26, 26, 0.8);
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-#interface #specs .values .posValue {
+#interface #modify .globals {
+  width: 84px;
+  position: absolute;
+  right: 0px;
+}
+#interface #modify .globals label {
+  width: 84px;
+  margin: 2px 0;
+}
+#interface #modify .globals .fill,
+#interface #modify .globals .fill:link,
+#interface #modify .globals .fill:visited,
+#interface #modify .globals .fill:hover,
+#interface #modify .globals .fill:active {
+  width: 84px;
+  margin: 2px 0;
+}
+#interface #modify .globals .halves,
+#interface #modify .globals .halves:link,
+#interface #modify .globals .halves:visited,
+#interface #modify .globals .halves:hover,
+#interface #modify .globals .halves:active {
+  width: 40px;
+  margin: 2px 0;
+}
+#interface #modify .globals .halves:last-child {
+  margin-left: 4px;
+}
+#interface #modify .posValue {
+  display: block;
   outline: none;
   width: 100px;
   float: left;
@@ -276,9 +315,12 @@ canvas {
   height: 16px;
   margin-bottom: 2px;
 }
-#interface #specs .values .posValue:focus {
+#interface #modify .posValue:focus {
   border-bottom-width: 3px;
   margin-bottom: 0px;
+}
+#interface #modify .ratio ~ .posValue {
+  width: 70px;
 }
 #interface > div {
   border: 1px solid rgba(0, 0, 0, 0.8);
