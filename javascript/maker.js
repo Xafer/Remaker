@@ -44,7 +44,7 @@ function Model() //Used model
 //Variable instatiation
 
 //Generation
-var baseGeometry = new THREE.BoxGeometry(1,1,1);
+var baseGeometry = new THREE.BoxGeometry(1,1,1);//new THREE.BoxGeometry(1,1,1);
 
 //Main
 var selection = new Array();
@@ -342,17 +342,21 @@ Model.prototype.scalePart = function(part, axis, amount)
 
 //Main loops
 
-var render = function ()
+function render()
 {
     renderer.render(scene, camera);//Renders the scene in which the models reside
     overlayRenderer.render(overlayScene,camera);//Renders the scene in which the overlay resides
-};
+}
 
-function main()
+function handleCamera()
 {
     updateCameraCenterPoint();//Smooth animation for the camera
     updateCameraPosition();
-    
+}
+
+function main()
+{
+    handleCamera();
     render();//Triggers the render
     requestAnimationFrame(main);//Loop main at optimal speed
 }
@@ -362,12 +366,9 @@ function main()
 function init()//Initiate what need to be initiated
 {
     main();//Starts the main loop.
-    
     //Temporary debug for fancyness and demonstration.
-    
-    camera.position.set(3,1,3);//Places the camera
-    camera.rotation.y = Math.PI/4;//Rotates it to face the item (45degrees)
     importModel(a);//Import the demo model
+    updateCameraCenterDest();
 }
 
 init();//Begins the application
