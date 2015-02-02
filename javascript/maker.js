@@ -358,7 +358,7 @@ Model.prototype.rotatePart = function(part, axis, amount, local)
     
     newPosition.z *= -1;
     
-    //part.quaternion.multiply(q);
+    part.quaternion.multiply(q);
     part.position.copy(newPosition);
 }
 
