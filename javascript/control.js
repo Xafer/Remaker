@@ -14,6 +14,13 @@ var mouse =
     lastPosition : new THREE.Vector2()
 };
 
+var ratio =
+{
+    position: 0.1,
+    rotation: (Math.PI/4) / 2,
+    scale: 0.1
+};
+
 (function(){
     //Keyboard keys
     
@@ -90,6 +97,64 @@ var mouse =
         {
             case 0:mouse.left = state; break;
             case 2:mouse.right = state; break;
+        }
+    }
+    
+    document.getElementById("btn-add").addEventListener("click",function(e)
+    {
+        model.addPart();
+    });
+    
+    document.getElementById("btn-clone").addEventListener("click",function(e)
+    {
+        for(var i in selection)
+        {
+            var part = selection[i];
+            model.addPart(part.position.clone,part.scale.clone,part.quaternion.clone,part.material.color.clone);
+        }
+    });
+    
+    document.getElementById("btn-delete").addEventListener("click",function(e)
+    {
+        var l = selection.length;
+        for(var i = 0; i < l; i++)
+        {
+            var part = selection[0];
+            model.removePart(part);
+            selection.splice(0,1);
+        }
+        
+        updateCameraCenterDest();
+    });
+    
+    //Interface buttons
+    
+    for(var i = 0; i < 3; i++)//Assigning functions to buttons
+    {
+        for(var j = 0; j < 3; j++)
+        {
+            for(var k = 0; k < 2; k++)
+            {
+                var btnType = ['p','r','s'][i];//Position, rotation, scale
+                var axis = ['x','y','z'][j];
+                var btnDir = ['m','p'][k];//Minus, plus
+                
+                document.getElementById(btnType + axis + btnDir).addEventListener('click',function(e)
+                {
+                    var id = e.target.id;
+                    var type = ['p','r','s'].indexOf(id[0]);
+                    var typeString = ["position","rotation","scale"][type];
+                    var axis = id[1];
+                    var orientation = (id[2] == "m")?-1:1;
+                    var operation = [model.movePart,model.rotatePart,model.scalePart][type];
+                    for(var partIndex in selection)
+                    {
+                        var part = selection[partIndex];
+                        var amount = orientation * ratio[typeString];
+                        operation(part,axis,amount);
+                    }
+                });
+            }
         }
     }
 })();

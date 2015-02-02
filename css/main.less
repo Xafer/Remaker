@@ -7,6 +7,8 @@
 @colorBackground: darken(@colorBack,10%);
 @colorBgGrad: darken(@colorBackground,10%);
 @borderInterface: darken(@colorBack,40%);
+@boxText: #999;
+@placeholderText: rgba(0,30,30,0.5);
 
 //MIXINS
 
@@ -26,12 +28,18 @@ body
     color:white;
 }
 
+*{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 #display
 {
-    background:linear-gradient(@colorBackground, @colorBgGrad);
-    background:-webkit-linear-gradient(@colorBackground, @colorBgGrad);
-    background:-moz-linear-gradient(@colorBackground, @colorBgGrad);
-    background:-ms-linear-gradient(@colorBackground, @colorBgGrad);
+    background:radial-gradient(circle at 50% 100%,@colorBackground, @colorBgGrad);
     position:absolute;
     left:0;
     right:0;
@@ -71,11 +79,17 @@ canvas
     }
 }
 
+::-webkit-input-placeholder{color:@placeholderText;}
+:-moz-placeholder{color:@placeholderText;}
+::-moz-placeholder{color:@placeholderText;}
+:-ms-input-placeholder{color:@placeholderText;}
+
 #interface
 {
     background-color:@colorBack;
-    width:320px;
+    width:335px;
     padding:10px;
+    padding-right:20px;
     height:100%;
     font-family:n8;
     border-right:1px solid @borderInterface;
@@ -85,7 +99,7 @@ canvas
     {
         h1
         {
-            font-size:24px;
+            font-size:16px;
         }
         p
         {
@@ -97,23 +111,32 @@ canvas
     {
         h2
         {
-            font-size:16px;
+            font-size:14px;
         }
-        input,input:focus
+        input
         {
-            margin:2px 0;
-            color:#999;
-            border:1px solid #999;
-            border-radius: 2px;
-            font-size:12px;
+            width:100%;
+            outline:none;
+            background-color:rgba(0,0,0,0);
+            border:none;
+            border-bottom:1px solid black;
+            margin-bottom:2px;
+            transition:0.2s;
+            font-size:8px;
         }
+        input:focus
+        {
+            border-bottom-width:3px;
+            margin-bottom:0px;
+        }
+        
         li
         {
             display:inline;
             
             label
             {
-                font-size:12px;
+                font-size:8px;
             }
         }
     }
@@ -218,6 +241,106 @@ canvas
     #specs > ul
     {
         text-align: center;
+    }
+    
+    #specs > div
+    {
+        padding:20px 0;
+    }
+    
+    #specs h3
+    {
+        font-size:10px;
+        border-left:3px solid @borderInterface;
+        border-right:3px solid @borderInterface;
+        border-radius: 2px;
+        width:100px;
+        height:16px;
+        margin:10px auto;
+    }
+    
+    #specs h3:before
+    {
+        content:"";
+        display:block;
+        border-top:1px solid @borderInterface;
+        box-shadow:0 2px 0 @borderInterface;//lighten(@borderInterface,90%);
+        position:relative;
+        width:100%;
+        left:-100%;
+        top:7px;
+    }
+    
+    #specs h3:after
+    {
+        content:"";
+        display:block;
+        border-top:1px solid @borderInterface;
+        box-shadow:0 2px 0 @borderInterface;//lighten(@borderInterface,90%);
+        position:relative;
+        width:100%;
+        right:-100%;
+        top:-5px;
+    }
+    
+    #specs form
+    {
+        position:relative;
+        height:100px;
+    }
+    
+    #specs .values
+    {
+        font-size:8px;
+        color:white;
+        
+        label
+        {
+            clear:left;
+            float:left;
+            width:30px;
+            height:16px;
+            color:@placeholderText;
+            text-shadow:none;
+            border-bottom:1px solid black;
+            padding:3px;
+        }
+        
+        a , a:link , a:visited , a:hover , a:active
+        {
+            color:white;
+            display:block;
+            float:left;
+            width:16px;
+            height:16px;
+            font-size:12px;
+            margin-bottom:2px;
+            margin-top:-2px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size:10px;
+            
+            .outliner;
+        }
+        
+        .posValue
+        {
+            outline:none;
+            width:100px;
+            float:left;
+            background-color:rgba(0,0,0,0);
+            border:none;
+            border-bottom:1px solid black;
+            transition:0.2s;
+            height:16px;
+            margin-bottom:2px;
+        }
+        
+        .posValue:focus
+        {
+            border-bottom-width: 3px;
+            margin-bottom:0px;
+        }
     }
 }
 

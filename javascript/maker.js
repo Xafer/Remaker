@@ -312,6 +312,8 @@ Model.prototype.addPart = function(position,scale,rotation,color)//Create a new 
     this["parts"].push(part);//Add the part to the array of parts of the model
     
     this["sceneObject"].add(part);//Add the part to the group of object on the scene
+    
+    updateCameraCenterDest();
 }
 
 Model.prototype.removePart = function(part)
@@ -320,9 +322,11 @@ Model.prototype.removePart = function(part)
     this["parts"].splice(index,1);//Remove the part from the array
     
     this["sceneObject"].remove(part);//Remove the part from the model and the scene.
+    
+    updateCameraCenterDest();
 }
 
-Model.prototype.movePart = function(part, local, axis, amount)
+Model.prototype.movePart = function(part, axis, amount, local)
 {
     var movement = new THREE.Vector3();
     
@@ -332,6 +336,30 @@ Model.prototype.movePart = function(part, local, axis, amount)
         movement.applyQuaternion(part.quaternion);//Rotates the movement vector to the current part's orientation
     
     part.position.add(movement);
+    
+    updateCameraCenterDest();
+}
+
+Model.prototype.rotatePart = function(part, axis, amount, local)
+{
+    var q = new THREE.Quaternion();
+    q[axis] = Math.sin(amount);
+    q.w = Math.cos(amount);
+    
+    var newRelativePosition = new THREE.Vector3();
+    
+    newRelativePosition.subVectors(part.position,centerPointDest);
+    
+    newRelativePosition.applyQuaternion(q);
+    
+    var newPosition = new THREE.Vector3();
+    
+    newPosition.addVectors(newRelativePosition,centerPointDest);
+    
+    newPosition.z *= -1;
+    
+    //part.quaternion.multiply(q);
+    part.position.copy(newPosition);
 }
 
 Model.prototype.scalePart = function(part, axis, amount)

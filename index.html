@@ -40,14 +40,46 @@
             </ul>
         </div><!--/control-->
         <div id="specs" class="clearfix"><!--Block Specifications-->
-            <ul><!--Pannel toggler-->
+            <ul class="clearfix"><!--Pannel toggler-->
                 <li><a href="#" id="btn-mod"></a></li>
                 <li><a href="#" id="btn-col"></a></li>
             </ul>
-            <div><!--Modification pannel-->
-                
+            <div id="modify"><!--Modification pannel-->
+                <form>
+                    <h3>Position</h3>
+                    <div class="values">
+                        <label for="positionX">X:</label><input id="posX" class="posValue" name="positionX" type="text">
+                        <a id="pxm">-</a><a id="pxp">+</a>
+                        <label for="positionY">Y:</label><input id="posY" class="posValue" name="positionY" type="text">
+                        <a id="pym">-</a><a id="pyp">+</a>
+                        <label for="positionZ">Z:</label><input id="posZ" class="posValue" name="positionZ" type="text">
+                        <a id="pzm">-</a><a id="pzp">+</a>
+                    </div>
+                </form>
+                <form>
+                    <h3>Rotation</h3>
+                    <div class="values">
+                        <label for="rotationX">X:</label><input id="rotX" class="posValue" name="rotationX" type="text">
+                        <a id="rxm">-</a><a id="rxp">+</a>
+                        <label for="rotationY">Y:</label><input id="rotY" class="posValue" name="rotationY" type="text">
+                        <a id="rym">-</a><a id="ryp">+</a>
+                        <label for="rotationZ">Z:</label><input id="rotZ" class="posValue" name="rotationZ" type="text">
+                        <a id="rzm">-</a><a id="rzp">+</a>
+                    </div>
+                </form>
+                <form>
+                    <h3>Scale</h3>
+                    <div class="values">
+                        <label for="scaleX">X:</label><input id="scaX" class="posValue" name="scaleX" type="text">
+                        <a id="sxm">-</a><a id="sxp">+</a>
+                        <label for="scaleY">Y:</label><input id="scaY" class="posValue" name="scaleY" type="text">
+                        <a id="sym">-</a><a id="syp">+</a>
+                        <label for="scaleZ">Z:</label><input id="scaZ" class="posValue" name="scaleZ" type="text">
+                        <a id="szm">-</a><a id="szp">+</a>
+                    </div>
+                </form>
             </div>
-            <div><!--Colorisation pannel-->
+            <div id="colorize" style="display:none;"><!--Colorisation pannel-->
                 
             </div>
         </div><!--/specs-->
@@ -59,6 +91,6 @@
 <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="lib/jasny-bootstrap/js/jasny-bootstrap.min.js"></script>
 <script src="assets/demoModel/spikedClub.js"></script>
-<script src="javascript/control.js"></script>
 <script src="javascript/maker.js"></script>
+<script src="javascript/control.js"></script>
 </html>
