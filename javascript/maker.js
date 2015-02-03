@@ -22,8 +22,10 @@ document.getElementById("display").appendChild( overlayRenderer.domElement );//A
 
 //Classes
 
-function Model() //Used model
+function Model(selectedScene) //Used model
 {
+    if(selectedScene == undefined)selectedScene = scene;
+    
     this["_author"] = "";//Author's name
     this["_name"] = "";//Unique identifier
     this["_description"] = "";//Item description. Can be whatever.
@@ -31,6 +33,7 @@ function Model() //Used model
     this["lights"] = [];//Array containing lights
     this["systems"] = [];//Array containing particle systems
     this["sceneObject"] = new THREE.Group();//Object used to display the model on the scene. It groups the parts.
+    this.parentScene = selectedScene;
     
     //this.addPart = function(pos,scale,rot,color)
     
@@ -38,18 +41,21 @@ function Model() //Used model
     
     //this.movePart = function(part, axis, local, amount)
     
-    scene.add(this["sceneObject"]);
+    this.parentScene.add(this["sceneObject"]);
 }
 
 //Variable instatiation
 
 //Generation
 var baseGeometry = new THREE.BoxGeometry(1,1,1);//new THREE.BoxGeometry(1,1,1);
+var baseSelectionGeometry = new THREE.BoxGeometry(1,1,1);
 
 //Main
 var selection = new Array();
 
 var model = new Model();
+
+var overlayModel = new Model(overlayScene);
 
 var cameraCenterPoint = new THREE.Vector3();
 var centerPointDest = new THREE.Vector3();
@@ -136,6 +142,8 @@ function exportModel()
 
 function getMiddlePos(partArray)
 {
+    if(partArray.length == 0)return;
+    
     var minPos = new THREE.Vector3();
     var maxPos = new THREE.Vector3();
     
@@ -174,7 +182,7 @@ function updateCameraCenterDest()//Changing the camera destination after smoothi
     else
         newCenterPosition = getMiddlePos(selection);
     
-    centerPointDest.copy(newCenterPosition);
+    if(newCenterPosition != undefined)centerPointDest.copy(newCenterPosition);
 }
 
 function updateCameraCenterPoint()//Smoothing between selections
@@ -197,8 +205,8 @@ function rotateCamera()
     
     subbedMovement.subVectors(mouse.position,mouse.lastPosition);
     
-    camera.rotation.y -= subbedMovement.x/1000 * speed;
-    camera.rotation.x -= subbedMovement.y/1000 * speed;
+    camera.rotation.y -= subbedMovement.x/300 * speed;
+    camera.rotation.x -= subbedMovement.y/300 * speed;
 }
 
 function updateCameraPosition()
@@ -261,12 +269,18 @@ function getSelectableAt(vec2)
 function setSelection(part)
 {
     selection = [part];
+    
+    reEvaluateSelectionModel();
+    
     updateCameraCenterDest();
 }
 
 function addToSelection(part)
 {
     selection.push(part);
+    
+    reEvaluateSelectionModel();
+    
     updateCameraCenterDest();
 }
 
@@ -274,13 +288,35 @@ function removeFromSelection(part)
 {
     var pos = selection.indexOf(part);
     selection.splice(pos,1);
+    
+    reEvaluateSelectionModel();
+    
     updateCameraCenterDest();
 }
 
 function clearSelection()
 {
     selection = [];
+    
+    reEvaluateSelectionModel();
+    
     updateCameraCenterDest();
+}
+
+function reEvaluateSelectionModel()
+{
+    var partAmount = overlayModel.parts.length;
+    for(var i = 0; i < partAmount; i++)
+    {
+        var part = overlayModel.parts[0];
+        overlayModel.removePart(part);
+    }
+    partAmount = selection.length;
+    for(var i = 0; i < partAmount; i++)
+    {
+        var part = selection[i].clone();
+        overlayModel.addPart(part.position,part.scale,part.rotation,part.material.color);
+    }
 }
 
 //Manipulation functions
@@ -295,9 +331,22 @@ Model.prototype.addPart = function(position,scale,rotation,color)//Create a new 
     if(scale == undefined)scale = new THREE.Vector3(1,1,1);//Must be 1,1,1 or error occurs and the part scale is 0,0,0 by default (infinitely small)
     if(rotation == undefined)rotation = new THREE.Quaternion();
     
-    var geometry = baseGeometry;//Copies the geomatry of the base object, notable a 1x1x1 cube.
+    var geometry;//Copies the geomatry of the base object, notable a 1x1x1 cube.
     
     var material = new THREE.MeshBasicMaterial({color : color});//Set the material color depending on final color
+    
+    switch(this.parentScene)//Assigning different geometries depending on the scene. One can't use the other's or it'll crash.
+    {
+        case scene:
+            geometry = baseGeometry;
+            break;
+        case overlayScene:
+            geometry = baseSelectionGeometry;
+            material.wireframe = true;
+            var colorHex = material.color.clone();
+            material.color.setRGB((1-colorHex.r) * 0.7 + 0.3, (1-colorHex.g) * 0.7 + 0.3 , (1-colorHex.b) * 0.7 + 0.3);
+            break;
+    }
     
     var part = new THREE.Mesh(geometry,material);
     
@@ -307,6 +356,9 @@ Model.prototype.addPart = function(position,scale,rotation,color)//Create a new 
     part.scale.copy(scale);
     part.rotation.copy(rotation);
     
+    //Modifying the part depending on where it's rendered
+    
+    
     //Adding the part to the model
     
     this["parts"].push(part);//Add the part to the array of parts of the model
@@ -314,7 +366,7 @@ Model.prototype.addPart = function(position,scale,rotation,color)//Create a new 
     this["sceneObject"].add(part);//Add the part to the group of object on the scene
     
     updateCameraCenterDest();
-}
+};
 
 Model.prototype.removePart = function(part)
 {
@@ -324,7 +376,7 @@ Model.prototype.removePart = function(part)
     this["sceneObject"].remove(part);//Remove the part from the model and the scene.
     
     updateCameraCenterDest();
-}
+};
 
 Model.prototype.movePart = function(part, axis, amount, local)
 {
@@ -338,7 +390,7 @@ Model.prototype.movePart = function(part, axis, amount, local)
     part.position.add(movement);
     
     updateCameraCenterDest();
-}
+};
 
 Model.prototype.rotatePart = function(part, axis, amount, local)
 {
@@ -359,14 +411,14 @@ Model.prototype.rotatePart = function(part, axis, amount, local)
     newPosition.z *= -1;
     
     part.quaternion.multiply(q);
-    part.position.copy(newPosition);
-}
+    if(selection.length > 1)part.position.copy(newPosition);
+};
 
 Model.prototype.scalePart = function(part, axis, amount)
 {
     part.scale[axis] += amount;
     part.scale[axis] = Math.max(part.scale[axis] , 0);
-}
+};
 
 //Main loops
 

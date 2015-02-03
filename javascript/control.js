@@ -110,7 +110,7 @@ var ratio =
         for(var i in selection)
         {
             var part = selection[i];
-            model.addPart(part.position.clone,part.scale.clone,part.quaternion.clone,part.material.color.clone);
+            model.addPart(part.position,part.scale,part.rotation,part.material.color);
         }
     });
     
@@ -148,12 +148,18 @@ var ratio =
                     var typeString = ["position","rotation","scale"][type];
                     var axis = id[1];
                     var orientation = (id[2] == "m")?-1:1;
-                    var operation = [model.movePart,model.rotatePart,model.scalePart][type];
+                    var operation = ['movePart','rotatePart','scalePart'][type];
                     for(var partIndex in selection)
                     {
                         var part = selection[partIndex];
                         var amount = orientation * ratio[typeString];
-                        operation(part,axis,amount);
+                        model[operation](part,axis,amount);
+                    }
+                    for(var partIndex in overlayModel.parts)
+                    {
+                        var part = overlayModel.parts[partIndex];
+                        var amount = orientation * ratio[typeString];
+                        overlayModel[operation](part,axis,amount);
                     }
                 });
             }
