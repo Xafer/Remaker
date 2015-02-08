@@ -53,6 +53,12 @@ var baseSelectionGeometry = new THREE.BoxGeometry(1,1,1);
 //Main
 var selection = new Array();
 
+var selectionValues =
+{
+    rotation:new THREE.Quaternion(),
+    scale:new THREE.Vector3(1,1,1)
+};
+
 var model = new Model();
 
 var overlayModel = new Model(overlayScene);
@@ -60,10 +66,16 @@ var overlayModel = new Model(overlayScene);
 var cameraCenterPoint = new THREE.Vector3();
 var centerPointDest = new THREE.Vector3();
 
-var transformType = "translate";
+
+var transform =
+{
+    type:"translate",
+    local:true
+}
 
 var zoomFactor = 3;
 var lastMousePos = new THREE.Vector2();
+
 
 //Importation/exportations
 
@@ -273,6 +285,8 @@ function setSelection(part)
     reEvaluateSelectionModel();
     
     updateCameraCenterDest();
+    
+    loadValues();
 }
 
 function addToSelection(part)
@@ -282,6 +296,8 @@ function addToSelection(part)
     reEvaluateSelectionModel();
     
     updateCameraCenterDest();
+    
+    loadValues();
 }
 
 function removeFromSelection(part)
@@ -292,6 +308,8 @@ function removeFromSelection(part)
     reEvaluateSelectionModel();
     
     updateCameraCenterDest();
+    
+    loadValues();
 }
 
 function clearSelection()
@@ -301,6 +319,8 @@ function clearSelection()
     reEvaluateSelectionModel();
     
     updateCameraCenterDest();
+    
+    loadValues();
 }
 
 function reEvaluateSelectionModel()
@@ -316,6 +336,62 @@ function reEvaluateSelectionModel()
     {
         var part = selection[i].clone();
         overlayModel.addPart(part.position,part.scale,part.rotation,part.material.color);
+    }
+}
+
+function loadValues()
+{
+    var position = new THREE.Vector3();
+    var rotation = new THREE.Quaternion();
+    var scale = new THREE.Vector3(1,1,1);
+
+    var switcher = selection.length;
+    
+    if(switcher == 0)//If nothing is selected
+    {
+        //Clearing the values for later
+        position = undefined;
+        rotation = undefined;
+        scale = undefined;
+    }
+    else if(switcher == 1)//If exactly one part is selected
+    {
+        //Copy the part's propreties
+        position.copy(selection[0].position);
+        rotation.copy(selection[0].quaternion);
+        scale.copy(selection[0].scale);
+    }
+    else if(switcher > 1)//If more than a single part is selected
+    {
+        //Only copy the center's position, the remainder will stay default due to their varying nature
+        position.copy(centerPointDest);
+    }
+    
+    var euler;
+    
+    if(switcher >= 1)//if there is a selection
+    {
+        euler = new THREE.Euler();
+        euler.setFromQuaternion(rotation,"XYZ");
+    }
+    
+    //Setting the values to their input fields
+    
+    var axes = ['x','y','z'];
+    
+    for(var i = 0; i < 3; i++)
+    {
+        var axis = axes[i];
+        
+        var posValue = (position == undefined)?"":(position[axis].toFixed(4));
+        document.getElementById("pos"+axis.toUpperCase()).value = posValue;
+        
+        var rotValue = (euler == undefined)?"":(euler[axis].toFixed(4));
+        document.getElementById("rot"+axis.toUpperCase()).value = rotValue;
+        
+        var scaValue = (scale == undefined)?"":(scale[axis].toFixed(4));
+        document.getElementById("sca"+axis.toUpperCase()).value = scaValue;
+        
     }
 }
 
@@ -395,23 +471,27 @@ Model.prototype.movePart = function(part, axis, amount, local)
 Model.prototype.rotatePart = function(part, axis, amount, local)
 {
     var q = new THREE.Quaternion();
-    q[axis] = Math.sin(amount);
-    q.w = Math.cos(amount);
+    q[axis] = Math.sin(amount);//Aquire the value of the axis which is rotated
+    q.w = Math.cos(amount);//complete the quaternion
     
-    var newRelativePosition = new THREE.Vector3();
+    var newRelativePosition = new THREE.Vector3();//Create a a relative position, usually from
     
     newRelativePosition.subVectors(part.position,centerPointDest);
     
-    newRelativePosition.applyQuaternion(q);
+    newRelativePosition.applyQuaternion(q);//rotate from the global axis
     
     var newPosition = new THREE.Vector3();
     
     newPosition.addVectors(newRelativePosition,centerPointDest);
     
-    newPosition.z *= -1;
+    if(!local || selection.length > 1)
+    {
+        q.multiply(part.quaternion);
+        part.quaternion.copy(q);
+    }
+    else part.quaternion.multiply(q);
     
-    part.quaternion.multiply(q);
-    if(selection.length > 1)part.position.copy(newPosition);
+    part.position.copy(newPosition);
 };
 
 Model.prototype.scalePart = function(part, axis, amount)

@@ -1,0 +1,20 @@
+Repair rotation,
+
+possibility to import from either JSON or PNG (N8* default format)
+
+side interface
+{
+	import button
+	{
+		Import button interface
+	},
+	export button
+	{
+		Import button interface
+	},
+	colorize interface
+	{
+		rgb sliders,
+		color picker
+	}
+}
